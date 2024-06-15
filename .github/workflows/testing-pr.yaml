@@ -1,0 +1,32 @@
+name: Test Automation - Testing Pre-Merge
+
+on: pull_request
+
+jobs:
+  run-tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    env: 
+      DEFAULT_MUSIC_HUB_PROVIDER: SPOTIFY
+      DEFAULT_WEATHER_PROVIDER: OPENWEATHER
+      OPEN_WEATHER_WEATHER_URL: https://api.openweathermap.org/data/2.5/weather
+      OPEN_WEATHER_GEO_URL: http://api.openweathermap.org/geo/1.0/direct
+      SPOTIFY_BASE_URL: https://api.spotify.com/v1/search
+      SPOTIFY_ACCOUNTS_BASE_URL: https://accounts.spotify.com/api/token 
+    steps:
+      - name: Checkout under $GITHUB_WORKSPACE
+        uses: actions/checkout@v3
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20
+
+      - name: Install yarn
+        run: npm install bun -g
+
+      - name: Install all dependencies 
+        run: bun install
+
+      - name: Run tests
+        run: bun run test:e2e --coverage
