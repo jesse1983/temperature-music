@@ -1,22 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { CACHE_MANAGER, Cache } from 'cache-manager';
-import { PlaylistResult } from 'src/playlist/models/playlist-result.model';
+import { CACHE_MANAGER } from 'cache-manager';
 import { Playlist } from 'src/playlist/models/playlist.model';
 import { ConfigService } from '@nestjs/config';
 import { IMusicHubService } from '../interfaces/i-music-hub.service';
+import { MusicHubDTO } from '../models/music-hub.model';
 
 @Injectable()
 export class MusicHubSpotifyService implements IMusicHubService {
   tokenKey = 'SPOTIFY_TOKEN';
 
   constructor(
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        @Inject(CACHE_MANAGER) private cacheManager,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
   ) {}
 
-  public handlePlaylist(body): PlaylistResult {
+  public handlePlaylist(body): MusicHubDTO<Playlist> {
     return {
       count: body.playlists.total,
       data: body.playlists.items.map((e) => ({ ...e, tracks: e.tracks.href } as Playlist)),
@@ -43,7 +43,7 @@ export class MusicHubSpotifyService implements IMusicHubService {
     return access_token;
   }
 
-  public async getPlaylistByName(q: string): Promise<PlaylistResult> {
+  public async getPlaylistByName(genre: string, limit = 10, offset = 0): Promise<MusicHubDTO<Playlist>> {
     const token = await this.getToken();
     const type = 'playlist';
 
@@ -51,7 +51,7 @@ export class MusicHubSpotifyService implements IMusicHubService {
       this.configService.get<string>('SPOTIFY_BASE_URL'),
       {
         headers: { Authorization: `Bearer ${token}` },
-        params: { q, type },
+        params: { q: `genre:${genre}`, type, limit, offset },
       },
     );
 

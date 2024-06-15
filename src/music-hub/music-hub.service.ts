@@ -15,7 +15,7 @@ export class MusicHubService {
 
   constructor(
         @Inject(CACHE_MANAGER) cacheManager: Cache,
-          httpService: HttpService,
+        httpService: HttpService,
         private readonly configService: ConfigService,
 
   ) {

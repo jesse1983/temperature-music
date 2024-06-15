@@ -3,17 +3,17 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class Playlist {
   @Field({ description: 'A playlist ID' })
-    id: string;
+  id: string;
 
   @Field({ description: 'Name' })
-    name: string;
+  name: string;
 
   @Field({ description: 'Description' })
-    description: string;
+  description: string;
 
   @Field({ description: 'URL' })
-    href: string;
+  href: string;
 
   @Field({ description: 'Tracks' })
-    tracks: string;
+  tracks: string;
 }

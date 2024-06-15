@@ -1,4 +1,4 @@
-export interface Geolocation {
+export interface GeolocationDTO {
     name: string;
     local_names: object;
     lat: number;

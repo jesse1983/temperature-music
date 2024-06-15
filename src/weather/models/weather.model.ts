@@ -1,6 +1,6 @@
-export interface Weather {
+export interface WeatherDTO {
     coord: Coord
-    weather: Weather1[]
+    weather: Weather[]
     base: string
     main: Main
     visibility: number
@@ -12,6 +12,8 @@ export interface Weather {
     id: number
     name: string
     cod: number
+    city?: string;
+    state?: string;
   }
 
 export interface Coord {
@@ -19,7 +21,7 @@ export interface Coord {
     lat: number
   }
 
-export interface Weather1 {
+export interface Weather {
     id: number
     main: string
     description: string

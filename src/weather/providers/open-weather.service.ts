@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { CacheKey } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
-import { Weather } from '../models/weather.model';
-import { Geolocation } from '../models/geolocation.model';
+import { WeatherDTO } from '../models/weather.model';
+import { GeolocationDTO } from '../models/geolocation.model';
 import { IWeatherService } from '../interfaces/i-weather.service';
 
 export class OpenWeatherService implements IWeatherService {
@@ -14,12 +14,12 @@ export class OpenWeatherService implements IWeatherService {
   @CacheKey('getCityWeatherByName')
   public async getCityWeatherByName(city: string) {
     const geo = await this.getGeolocationByCity(city);
-    const weather = await this.getWeatherByCoordinates(geo.lat, geo.lon);
-    return weather;
+    const weather = await this.getWeatherByCoordinates(geo);
+    return { city: geo.name, state: geo.state, ...weather };
   }
 
   @CacheKey('getGeolocationByCity')
-  private async getGeolocationByCity(city: string): Promise<Geolocation> {
+  private async getGeolocationByCity(city: string): Promise<GeolocationDTO> {
     const response = await this.httpService.axiosRef.get(this.configService.get('OPEN_WEATHER_GEO_URL'), {
       params: {
         q: city,
@@ -27,19 +27,19 @@ export class OpenWeatherService implements IWeatherService {
         appid: this.configService.get<string>('OPEN_WEATHER_API_KEY'),
       },
     });
-    return response.data?.[0] as Geolocation;
+    return response.data?.[0] as GeolocationDTO;
   }
 
   @CacheKey('getWeatherByCoordinates')
-  private async getWeatherByCoordinates(lat: number, lon: number): Promise<Weather> {
+  private async getWeatherByCoordinates(geo: GeolocationDTO): Promise<WeatherDTO> {
     const response = await this.httpService.axiosRef.get(this.configService.get('OPEN_WEATHER_WEATHER_URL'), {
       params: {
-        lat,
-        lon,
+        lat: geo.lat,
+        lon: geo.lon,
         units: 'metric',
         appid: this.configService.get<string>('OPEN_WEATHER_API_KEY'),
       },
     });
-    return response?.data as Weather;
+    return response?.data as WeatherDTO;
   }
 }

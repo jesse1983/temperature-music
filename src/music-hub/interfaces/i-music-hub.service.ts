@@ -1,7 +1,7 @@
-import { PlaylistResult } from 'src/playlist/models/playlist-result.model';
+import { Playlist } from 'src/playlist/models/playlist.model';
+import { MusicHubDTO } from '../models/music-hub.model';
 
 export interface IMusicHubService {
     getToken(): Promise<string>;
-    getPlaylistByName(name: string): Promise<PlaylistResult>;
-    handlePlaylist(body: unknown): PlaylistResult;
+    getPlaylistByName(name: string, limit?: number, offset?: number): Promise<MusicHubDTO<Playlist>>;
 }
