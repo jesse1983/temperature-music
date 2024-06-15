@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+    nginx:
+        image: nginx:alpine
+        container_name: nginx
+        ports:
+            - 80:80
+        restart: always
+        networks:
+            - frontend
+        volumes: 
+          - ./default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - node
+
+    node:
+        build:
+            context: .
+        container_name: node
+        ports:
+          - 3000:3000
+        env_file:
+          - .env
+        restart: always
+        networks:
+            - frontend
+        command: bun run start
+        environment:
+          - SERVER_PORT = 3000
+          - DEFAULT_MUSIC_HUB_PROVIDER = "SPOTIFY"
+          - REDIS_CACHE_HOST = redis
+          - REDIS_CACHE_PORT = 6379
+          - DEFAULT_WEATHER_PROVIDER = "OPENWEATHER"
+          - OPEN_WEATHER_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
+          - OPEN_WEATHER_GEO_URL = "http://api.openweathermap.org/geo/1.0/direct"
+          - OPEN_WEATHER_API_KEY = "6cde2018052e5bb367f80a3440a0652e"
+          - SPOTIFY_BASE_URL = "https://api.spotify.com/v1/search"
+          - SPOTIFY_CLIENT_ID = "bf40b92ef1e64a2e9d06c7ff7caf46bc"
+          - SPOTIFY_CLIENT_SECRET = "85a753a25d9b4199a2e95afd0e42d552"
+          - SPOTIFY_ACCOUNTS_BASE_URL = "https://accounts.spotify.com/api/token"
+        depends_on:
+            - redis
+
+    redis:
+        image: redis
+        container_name: redis
+        networks:
+            - frontend
+
+networks:
+    frontend:
+        driver: bridge
