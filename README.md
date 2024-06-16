@@ -24,6 +24,8 @@ https://github.com/jesse1983/temperature-music/assets/2489514/ed9aebd0-be0d-4457
 
 Fetches the best playlists according to your city's weather.
 
+-----
+
 ## Technologies
 
 ### Node
@@ -41,6 +43,10 @@ Focused on SOLID architecture, NestJS is an excellent choice for a scalable, mod
 ### JWT
 
 JSON Web Token is a Stateless Authentication better for scalable applications, where servers can avoid querying the database for user details on every request, improving performance.
+
+### Nginx
+
+A reverse proxy server, Nginx reduces the waiting time to load, acts as an inexpensive and robust load balancer and security layer.
 
 ### Eslint
 
@@ -66,6 +72,8 @@ Jest was used to ensure 100% test coverage.
 
 Used as platforms to manage the CI/CD process.
 
+-----
+
 ## Best Practices
 
 - Modules and Inverse Dependency Injection
@@ -76,27 +84,64 @@ Used as platforms to manage the CI/CD process.
 
 ## Installation
 
+- Download the project
+- Rename `.env.example` to `.env`
+
 ### Using Docker
 
 Prerequisites: Docker and Docker Compose
 
-- Download the project
 - Run `docker compose up`
-- Access `http://localhost:3000/graphql` via browser or GraphQL client (e.g., Postman)
+- Access `http://localhost:80/graphql` via browser or GraphQL client (e.g., Postman)
 
 ### Using Node
 
 Prerequisites: Node 20+ and Bun
 
 - Download the project
-- Rename `.env.example` to `.env`
 - Run `bun install`
 - Run `bun run build`
 - Run `bun run start`
+- Access `http://localhost:3000/graphql` via browser or GraphQL client (e.g., Postman)
+
+### First request
+
+1 - Sign in using mutation
+```
+mutation LOGIN {
+  signIn(username: "demo", password: "demo") {
+    access_token
+  }
+}
+```
+
+2 - Copy `access_token` value and paste on http headers as `{ Authorization: "Bearer {add-access-token-here}" }`
+
+3 - Run a simple request:
+```
+query GetPlaylists {
+    getPlaylists(city: "Montreal") {
+        count
+        city
+        state
+        genre
+        temp
+        data {
+            id
+            name
+            description
+            href
+        }
+    }
+}
+```
 
 ## Tests
 
 - Run `bun run test:e2e`
+<img width="727" alt="image" src="https://github.com/jesse1983/temperature-music/assets/2489514/1b1d9cc8-e3d4-459c-853a-505fbead079d">
+
+-----
 
 ## Contribution
 
