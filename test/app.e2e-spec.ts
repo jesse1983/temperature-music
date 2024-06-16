@@ -132,9 +132,27 @@ describe('GraphQL AppResolver', () => {
 
   describe(gql, () => {
     describe('getPlaylists', () => {
+      let accessToken = '';
+      beforeEach(async () => {
+        await request(app.getHttpServer())
+        .post(gql)
+        .send({
+          query: `
+            mutation LOGIN {
+              signIn(username: "demo", password: "demo") {
+                access_token
+              }
+            }
+        `,
+        }).expect((res) => {
+          accessToken = res.body.data.signIn.access_token;
+        });
+      });
+
       it('should show playlists', () => {
         return request(app.getHttpServer())
           .post(gql)
+          .set({ Authorization: `Bearer ${accessToken}` })
           .send({
             query: `
               query GETPLAYLIST {
@@ -159,50 +177,99 @@ describe('GraphQL AppResolver', () => {
       });
 
       it('should show playlists cached', async () => {
-        await request(app.getHttpServer())
-          .post(gql)
-          .send({
-            query: `
-              query GETPLAYLIST {
-                getPlaylists(city: "New York") {
-                  count
-                  data {
-                    id
-                    name
-                    href
-                    description
-                    tracks
+        const query = `
+                query GETPLAYLIST {
+                  getPlaylists(city: "Rio de Janeiro") {
+                    count
+                    data {
+                      id
+                      name
+                      href
+                      description
+                      tracks
+                    }
                   }
                 }
-              }
-          `,
-          })
+            `;
+        const server = request(app.getHttpServer());
+        await server.post(gql).set({ Authorization: `Bearer ${accessToken}` }).send({ query });    
+        await server.post(gql).set({ Authorization: `Bearer ${accessToken}` }).send({ query }).expect(200);
+      });
+    });
+
+    describe('signIn', () => {
+      it('should return 403 when try sign in with wrong user and password', () => {
         return request(app.getHttpServer())
-          .post(gql)
-          .send({
-            query: `
-              query GETPLAYLIST {
-                getPlaylists(city: "New York") {
-                  count
-                  data {
-                    id
-                    name
-                    href
-                    description
-                    tracks
-                  }
-                }
+        .post(gql)
+        .send({
+          query: `
+            mutation LOGIN {
+              signIn(username: "wrong", password: "wrong") {
+                access_token
               }
-          `,
-          })
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data.getPlaylists.count).toBe(1);
-            expect(res.body.data.getPlaylists.data).toHaveLength(1);
-          });
+            }
+        `,
+        })
+        .expect((res) => {
+          expect(res.body.errors[0].extensions.code).toBe('UNAUTHENTICATED');
+          expect(res.body.errors[0].extensions.originalError.message).toBe('Unauthorized');
+          expect(res.body.errors[0].extensions.originalError.statusCode).toBe(401);
+        });
       });
 
-    });
+      it('should return 403 when protected request without token', () => {
+        return request(app.getHttpServer())
+        .post(gql)
+        .send({
+          query: `
+            query GETPLAYLIST {
+              getPlaylists(city: "Rio de Janeiro") {
+                count
+                data {
+                  id
+                  name
+                  href
+                  description
+                  tracks
+                }
+              }
+            }
+        `,
+        })
+        .expect((res) => {
+          expect(res.body.errors[0].extensions.code).toBe('UNAUTHENTICATED');
+          expect(res.body.errors[0].extensions.originalError.message).toBe('Unauthorized');
+          expect(res.body.errors[0].extensions.originalError.statusCode).toBe(401);
+        });
+      });
+
+      it('should return 403 when protected request with invalid token', () => {
+        return request(app.getHttpServer())
+        .post(gql)
+        .set({ Authorization: `Bearer INVALID_JWT_TOKEN` })
+        .send({
+          query: `
+            query GETPLAYLIST {
+              getPlaylists(city: "Rio de Janeiro") {
+                count
+                data {
+                  id
+                  name
+                  href
+                  description
+                  tracks
+                }
+              }
+            }
+        `,
+        })
+        .expect((res) => {
+          expect(res.body.errors[0].extensions.code).toBe('UNAUTHENTICATED');
+          expect(res.body.errors[0].extensions.originalError.message).toBe('Unauthorized');
+          expect(res.body.errors[0].extensions.originalError.statusCode).toBe(401);
+        });
+      });
+    })
   });
 
   afterAll(async () => {
