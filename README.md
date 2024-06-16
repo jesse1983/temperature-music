@@ -72,8 +72,6 @@ Jest was used to ensure 100% test coverage.
 
 Used as platforms to manage the CI/CD process.
 
------
-
 ## Best Practices
 
 - Modules and Inverse Dependency Injection
@@ -82,9 +80,11 @@ Used as platforms to manage the CI/CD process.
 - Fully containerized (no need for additional installations to run the code)
 - Memory cache or Redis, ready for other stores like Memcached, etc.
 
+-----
+
 ## Installation
 
-- Download the project
+- Clone the project
 - Rename `.env.example` to `.env`
 
 ### Using Docker
@@ -98,7 +98,6 @@ Prerequisites: Docker and Docker Compose
 
 Prerequisites: Node 20+ and Bun
 
-- Download the project
 - Run `bun install`
 - Run `bun run build`
 - Run `bun run start`
