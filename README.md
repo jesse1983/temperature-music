@@ -3,6 +3,8 @@
 The best playlists according to the weather.
 
 Demo: https://temperature-music-production.up.railway.app/graphql
+User: *demo*
+Password: *demo*
 
 ## Table of Contents
 
@@ -17,11 +19,6 @@ Demo: https://temperature-music-production.up.railway.app/graphql
 
 Fetches the best playlists according to your city's weather.
 
-<video controls>
-    <source src="demo.mp4" type="video/mp4">
-</video>
-
-
 ## Technologies
 
 ### Node
@@ -35,6 +32,10 @@ Better error feedback, refactoring, and autocomplete, essential for team collabo
 ### NestJS
 
 Focused on SOLID architecture, NestJS is an excellent choice for a scalable, modularized application with Convention-Over-Configuration.
+
+### JWT
+
+JSON Web Token is a Stateless Authentication better for scalable applications, where servers can avoid querying the database for user details on every request, improving performance.
 
 ### Eslint
 

@@ -8,6 +8,7 @@ import { PlaylistModule } from './playlist';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import type { RedisClientOptions } from 'redis';
+import { AuthModule } from './auth/auth.module';
 
 
 const getCacheParams = () => {
@@ -25,13 +26,16 @@ const getCacheParams = () => {
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    CacheModule.register<RedisClientOptions>(getCacheParams()),    
+    CacheModule.register<RedisClientOptions>(getCacheParams()),   
+    AuthModule, 
     PlaylistModule,
     MusicHubModule,
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      context: ({ req, res }) => ({ req, res }),
     }),
-    WeatherModule],
+    WeatherModule
+  ],
 })
 export class AppModule {}
