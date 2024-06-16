@@ -13,6 +13,7 @@ jobs:
       OPEN_WEATHER_GEO_URL: http://api.openweathermap.org/geo/1.0/direct
       SPOTIFY_BASE_URL: https://api.spotify.com/v1/search
       SPOTIFY_ACCOUNTS_BASE_URL: https://accounts.spotify.com/api/token 
+      JWT_SECRET: IT'S A JWT SECRET, SHHHHIIIUUUU
     steps:
       - name: Checkout under $GITHUB_WORKSPACE
         uses: actions/checkout@v3
@@ -22,7 +23,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install yarn
+      - name: Install Bun
         run: npm install bun -g
 
       - name: Install all dependencies 
