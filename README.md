@@ -2,9 +2,14 @@
 
 The best playlists according to the weather.
 
-Demo: https://temperature-music-production.up.railway.app/graphql
-User: *demo*
-Password: *demo*
+Demo and Docs: https://temperature-music-production.up.railway.app/graphql
+
+User: **demo**
+
+Password: **demo**
+
+https://github.com/jesse1983/temperature-music/assets/2489514/ed9aebd0-be0d-4457-8414-df98b8ab21b9
+
 
 ## Table of Contents
 
