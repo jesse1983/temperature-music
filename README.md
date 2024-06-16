@@ -137,6 +137,9 @@ query GetPlaylists {
 
 ## Tests
 
+Prerequisites: Node 20+ and Bun
+
+- Run `bun install`
 - Run `bun run test:e2e`
 <img width="727" alt="image" src="https://github.com/jesse1983/temperature-music/assets/2489514/1b1d9cc8-e3d4-459c-853a-505fbead079d">
 
